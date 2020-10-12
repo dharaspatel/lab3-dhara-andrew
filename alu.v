@@ -13,11 +13,29 @@ module ALU
 
   wire [W:0]   carry;
   wire [W-1:0] result;
+  wire slt;
 
+  assign carry[0] = Ctrl[0];
+  
   generate genvar i;
     for (i=0;i<W;i=i+1) begin
       ALU_SLICE #(.DLY(DLY)) slice_inst(Ctrl,A[i],B[i],carry[i],result[i],carry[i+1]);
-    end
+    end 
   endgenerate
+  
+  xnor XOR1(slt, R[W-1], carry[W], carry[W-1]);
 
+  always @* begin
+  case (Ctrl)
+    `ADD_:  begin R = result; cout = carry[W]; end
+    `SUB_:  begin R = result; cout = carry[W]; end 
+    `XOR_:  begin R = result; end 
+    `SLT_:  begin R = slt; end
+    `AND_:  begin R = result; end
+    `NAND_: begin R = result; end
+    `NOR_:  begin R = result; end
+    `OR_:   begin R = result; end
+    default: /* default catch */;
+  endcase
+  end
 endmodule
