@@ -13,7 +13,7 @@ module ALU
 
   wire [W:0]   carry;
   wire [W-1:0] result;
-  wire slt;
+  wire slt, sltoverflow;
 
   assign carry[0] = Ctrl[0];
   
@@ -23,7 +23,7 @@ module ALU
     end 
   endgenerate
   
-  xnor XOR1(slt, R[W-1], carry[W], carry[W-1]);
+  xor XOR2(slt, carry[W], carry[W-1], result[W-1]);
 
   always @* begin
   case (Ctrl)
